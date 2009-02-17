@@ -1,0 +1,24 @@
+<h1>Editing bis_code</h1>
+
+<% form_for(@bis_code) do |f| %>
+  <%= f.error_messages %>
+
+  <p>
+    <%= f.label :own_code %><br />
+    <%= f.text_field :own_code %>
+  </p>
+  <p>
+    <%= f.label :label %><br />
+    <%= f.text_field :label %>
+  </p>
+  <p>
+    <%= f.label :description %><br />
+    <%= f.text_area :description %>
+  </p>
+  <p>
+    <%= f.submit "Update" %>
+  </p>
+<% end %>
+
+<%= link_to 'Show', @bis_code %> |
+<%= link_to 'Back', bis_codes_path %>

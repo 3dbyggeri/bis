@@ -1,0 +1,25 @@
+body { background-color: #fff; color: #333; }
+
+body, p, ol, ul, td {
+  font-family: verdana, arial, helvetica, sans-serif;
+  font-size:   10pt;
+  line-height: 1.6em;
+}
+
+h1 {
+  line-height: 1.2em;
+}
+
+ul {
+  padding-left:12px;
+}
+
+#header {
+  width: 500px;
+  float: right;
+  display:block;
+}
+
+#content {
+  display:block;
+}

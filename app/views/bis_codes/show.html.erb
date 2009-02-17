@@ -1,0 +1,17 @@
+<h1><%= @bis_code.full_code %></h1>
+<p><strong><%= @bis_code.label %></strong></p>
+
+<% unless @bis_code.description.blank? %>
+<p id="description"><%= @bis_code.description %></p>
+<% end %>
+
+<a href="http://www.digitaleprodukter.dk<%="?q=#{@bis_code.label}"%>">Søg efter denne kode på digitaleprodukter.dk</a>
+
+<% unless @bis_code.references.blank? %>
+<ul id="references">
+  <% @bis_code.references_as_referrer.each do |ref| %>
+  <li><%= ref.description %> <%= link_to "#{ref.reference.full_code} #{truncate(ref.reference.label, 20)}", ref.reference %></li>
+  <% end %>
+</ul>
+<% end %>
+</div>

@@ -1,0 +1,61 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="da" lang="da">
+<head>
+  <meta http-equiv="content-type" content="text/html;charset=UTF-8" />
+  <meta http-equiv="Content-Style-Type" content="text/css" />
+  <title><%= yield :title %>BIS Kode system</title>
+  <%= stylesheet_link_tag 'screen', :media => 'all' %>
+</head>
+<body>
+  <div id="header">
+    <div id="search">
+      <% form_tag("/search", :method => :get) do %>
+      <%= text_field_tag 'q' %>
+      <%= submit_tag "Søg BIS koder" %>
+      <% end %>
+    </div>
+    <ul id="hierachy">
+      <%- BisCode.get_hierachy_root.each do |root_code| -%>
+      <li><%= link_to "#{root_code.full_code} #{root_code.label}", root_code %>
+        <%- if root_code == @bis_code -%>
+          <ul>
+          <%- root_code.children.each do |child| -%>
+            <li><%= link_to "#{child.full_code} #{child.label}", child %></li>
+          <%- end -%>
+          </ul>
+        <%- end -%>
+        <%- if !@bis_code.nil? && root_code == @bis_code.root -%>
+          <%- @bis_code.parents_until_root.each do |code| -%>
+            <%- unless code == root_code -%>
+        <ul>
+          <li><%= link_to "#{code.full_code} #{code.label}", code %></li>
+            <%- end -%>
+          <%- end -%>
+            <ul>
+          <%- @bis_code.parent.children.each do |code| -%>
+            <%- if code == @bis_code -%>
+              <li><strong><%= "#{code.full_code} #{code.label}" %></strong></li>
+                <ul>
+              <%- @bis_code.children.each do |child| -%>
+                  <li><%= link_to "#{child.full_code} #{child.label}", child %></li>
+              <%- end -%>
+                </ul>
+            <%- else -%>
+              <li><%= link_to "#{code.full_code} #{code.label}", code %></li>
+            <%- end -%>
+          <%- end -%>
+          <%- @bis_code.parents_until_root.each do |code| -%>
+            </ul>
+          <%- end -%>
+        <%- end -%>
+      </li>
+      <%- end -%>
+    </ul>
+  </div>
+
+  <div id="content">
+    <%= yield :layout %>
+  </div>
+</body>
+</html>

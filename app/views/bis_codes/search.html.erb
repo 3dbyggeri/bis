@@ -1,0 +1,8 @@
+<h1>Søgeresultat</h1>
+<p>Der blev søgt på <strong>"<%= params[:q] %>"</strong></p>
+<div id="result_list">
+  <% @bis_codes.each do |code| %>
+  <div class="search_result"><p><strong><%= code.full_code %></strong>
+  <%= link_to "#{code.label}", code %></p></div>
+  <% end %>
+</div>
