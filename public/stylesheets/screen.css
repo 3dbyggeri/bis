@@ -49,10 +49,11 @@ ul {
 
 #code_navigation {
   background-color: #ccf;
-  width: 550px;
+  width: 500px;
   float: right;
   display: block;
-  padding: 20px;
+  padding: 15px;
+  margin-left: 10px;
 }
 
 #search {
@@ -98,6 +99,32 @@ ul {
 
 #content h3 {
   margin-left: 3%;
+}
+
+#content p.author {
+  font-style: italic;
+  font-size: 0.90em;
+}
+
+#content ul.images-with-description {
+  list-style:none;
+  margin:0;
+  margin-left: 3%;
+}
+
+#content li.images-with-description {
+  margin-bottom: 30px;
+}
+
+#content ul.images-with-description li p {
+  padding-left:16.75em;
+}
+#content ul.images-with-description li img {
+  float:left;
+  border: 0;
+  padding: 0;
+  margin:0;
+  margin-top:0.417em;
 }
 
 #references li {
