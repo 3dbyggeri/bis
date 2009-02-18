@@ -49,7 +49,7 @@ ul {
 
 #code_navigation {
   background-color: #ccf;
-  width: 500px;
+  width: 550px;
   float: right;
   display: block;
   padding: 20px;
@@ -59,8 +59,19 @@ ul {
   padding: 10px;
 }
 
-#hierachy {
+#code_navigation ul {
   list-style: none;
+  padding-left: 5px;
+}
+
+#code_navigation ul li .code {
+  clear: right;
+  float: left;
+  padding-right: 10px;
+}
+
+#code_navigation ul li .label {
+  
 }
 
 #content {
@@ -74,6 +85,18 @@ ul {
   padding-bottom: 20px;
   margin-left: 5%;
   width: 600px;
+}
+
+#content h1 {
+  margin-left: 1%;
+}
+
+#content h2 {
+  margin-left: 2%;
+}
+
+#content h3 {
+  margin-left: 3%;
 }
 
 #references li {

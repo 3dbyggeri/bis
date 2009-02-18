@@ -39,8 +39,33 @@ class Job < ActiveRecord::Base
     hierachy_root = BisCode.get_hierachy_root
     BisCode.find(:all).each do |code|
       if code.parent.blank? && !hierachy_root.include?(code)
-        @report += "BIS code #{code.full_code} did not find any parent\n"
-        success = false
+        found_in_last_minute = false
+        parent = nil
+        # if the code is from group 0-9 find the parent backwards
+        if (0..9).to_a.include? code.full_code.first.to_i
+          #first se if it's a combined code
+          if code.full_code =~ /[\/\+]/
+            parent_code = code.full_code.split('+').first.split('/').first
+            parent = BisCode.find_by_full_code(parent_code)
+          end
+          
+          # otherwise chop of chars from the right and see if a parent hides somewhere down the lane
+          parent_code = code.full_code.chop
+          while parent.nil? && parent_code.length > 1
+            parent = BisCode.find_by_full_code(parent_code)
+            parent_code.chop!
+          end
+
+          unless parent.blank?
+            code.parent = parent
+            code.save
+            found_in_last_minute = true
+          end
+        end
+        unless found_in_last_minute
+          @report += "BIS code #{code.full_code} did not find any parent\n"
+          success = false
+        end
       end
     end
     return success
@@ -55,20 +80,17 @@ class Job < ActiveRecord::Base
     # now to the rebuilding
     parent_code = parent.full_code
     children = []
-    # if a code is followed by a dot seperated sequence, it's an appended code, and the whole code should be the child
-    children = @bis_codes.select{ |code| code.full_code =~ /^#{parent_code}\s\d{3}\.\d{2}.*$/ }.sort_by { |code| code.full_code } if children.blank?
-    children = @bis_codes.select{ |code| code.full_code =~ /^#{parent_code}\s0\d{2,8}$/ }.sort_by { |code| code.full_code } if children.blank?
-    children = @bis_codes.select{ |code| code.full_code =~ /^#{parent_code}\s?\d$/ }.sort_by { |code| code.full_code } if children.blank?
-    children = @bis_codes.select{ |code| code.full_code =~ /^#{parent_code}\s?\d{2}$/ }.sort_by { |code| code.full_code } if children.blank?
-    children = @bis_codes.select{ |code| code.full_code =~ /^#{parent_code}\s?\d{3}$/ }.sort_by { |code| code.full_code } if children.blank?
-    children = @bis_codes.select{ |code| code.full_code =~ /^#{parent_code}\s?\d{4}$/ }.sort_by { |code| code.full_code } if children.blank?
-    children = @bis_codes.select{ |code| code.full_code =~ /^#{parent_code}\s?\d{5}$/ }.sort_by { |code| code.full_code } if children.blank?
-    children = @bis_codes.select{ |code| code.full_code =~ /^#{parent_code}\s?\d{6}$/ }.sort_by { |code| code.full_code } if children.blank?
-    children = @bis_codes.select{ |code| code.full_code =~ /^#{parent_code}\s?\d{7}$/ }.sort_by { |code| code.full_code } if children.blank?
-    children = @bis_codes.select{ |code| code.full_code =~ /^#{parent_code}\s?\d{8}$/ }.sort_by { |code| code.full_code } if children.blank?
-    # add any subsets divided by dot to the existing children array (this will support the multi-dimensional aspect of the BIS code system)
-    children = children + @bis_codes.select{ |code| code.full_code =~ /^#{parent_code}\.\d{2}$/ }.sort_by { |code| code.full_code }
-    children = @bis_codes.select{ |code| code.full_code =~ /^#{parent_code}.+$/ }.sort_by { |code| code.full_code } if children.blank? #catch all
+    
+    # groups 1-9
+    if (1..9).to_a.include? parent_code.first.to_i
+      children = @bis_codes.select{ |code| code.full_code =~ /^#{parent_code}\d$/ }.sort_by { |code| code.full_code }
+      children = @bis_codes.select{ |code| code.full_code =~ /^#{parent_code}\d{2}$/ }.sort_by { |code| code.full_code } if children.blank?
+      children = @bis_codes.select{ |code| code.full_code =~ /^#{parent_code}\s\d{2,3}$/ }.sort_by { |code| code.full_code } if children.blank?
+      # children = @bis_codes.select{ |code| code.full_code =~ /^#{parent_code}\+\d*$/ }.sort_by { |code| code.full_code } if children.blank?
+    # group 0
+    elsif parent_code.first.to_i == 0
+      children = @bis_codes.select{ |code| code.full_code =~ /^#{parent_code}\d$/ }.sort_by { |code| code.full_code } if children.blank?
+    end
     unless children.blank?
       children.each do |child|
         child.parent = parent
@@ -89,10 +111,11 @@ class Job < ActiveRecord::Base
       bis_code = BisCode.find_by_full_code(bis_code_params['full_code'])
 
       if bis_code.nil?
-        bis_code = BisCode.new(:full_code => bis_code_params['full_code'], :label => bis_code_params['label'])
+        bis_code = BisCode.new(:full_code => bis_code_params['full_code'], :label => bis_code_params['label'], :description => bis_code_params['description'])
       else
         bis_code.full_code = bis_code_params['full_code']
         bis_code.label = bis_code_params['label']
+        bis_code.description = bis_code_params['description']
       end
 
       unless bis_code.valid?

@@ -7,6 +7,9 @@ class BisCode < ActiveRecord::Base
   belongs_to :parent, :class_name => 'BisCode'
   has_many :children, :foreign_key => 'parent_id', :class_name => 'BisCode'
 
+  named_scope :by_full_code,
+              :order => 'full_code ASC'
+              
   validates_presence_of :full_code, :label
 
   def self.get_hierachy_root

@@ -2,7 +2,7 @@
 <p><strong><%= @bis_code.label %></strong></p>
 
 <% unless @bis_code.description.blank? %>
-<p id="description"><%= @bis_code.description %></p>
+<p id="description"><%= t @bis_code.description %></p>
 <% end %>
 
 <p><a href="http://www.digitaleprodukter.dk<%="?q=#{@bis_code.label}"%>">Søg efter denne kode på digitaleprodukter.dk</a></p>
