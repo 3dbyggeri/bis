@@ -1,0 +1,5 @@
+---
+vendor/rails:
+  :type: git
+  :repository: git://github.com/rails/rails.git
+  :revision: ff561370739eb809d1d006ea842cd2b1e43f6950

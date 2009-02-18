@@ -5,3 +5,4 @@ doc/api
 doc/app
 db/schema.rb
 db/*.sqlite3
+vendor/rails
