@@ -68,10 +68,11 @@ ul {
   clear: right;
   float: left;
   padding-right: 10px;
+  display: inline;
 }
 
 #code_navigation ul li .label {
-  
+  display: inline;
 }
 
 #content {
