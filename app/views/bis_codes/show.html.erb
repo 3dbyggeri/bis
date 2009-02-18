@@ -2,12 +2,16 @@
 <p><strong><%= @bis_code.label %></strong></p>
 
 <% unless @bis_code.description.blank? %>
+<h2>Beskrivelse</h2>
 <p id="description"><%= t @bis_code.description %></p>
 <% end %>
 
-<p><a href="http://www.digitaleprodukter.dk<%="?q=#{@bis_code.label}"%>">Søg efter denne kode på digitaleprodukter.dk</a></p>
+<h2>Links</h2>
+<p><a href="http://www.digitaleprodukter.dk<%="?q=#{@bis_code.label}"%>">Søg efter produkter på digitaleprodukter.dk</a></p>
+<p><%= link_to "XML for denne BIS kode", formatted_bis_code_path(@bis_code, :format => :xml)  %>
 
 <% unless @bis_code.references.blank? %>
+<h2>Henvisninger</h2>
 <ul id="references">
   <% @bis_code.references_as_referrer.each do |ref| %>
   <li><%= ref.description %><br /><%= link_to "#{ref.reference.full_code} #{ref.reference.label}", ref.reference %></li>

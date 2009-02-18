@@ -72,7 +72,8 @@ class Job < ActiveRecord::Base
   end
 
   def create_bis_code_children_hierachy(parent)
-    @bis_codes = BisCode.find_by_sql("SELECT id, full_code, label FROM bis_codes WHERE full_code LIKE '#{parent.full_code}%'")
+    select_code = ("AB".include? parent.full_code.first) ? parent.full_code.first : parent.full_code
+    @bis_codes = BisCode.find_by_sql("SELECT id, full_code, label FROM bis_codes WHERE full_code LIKE '#{select_code}%'")
     raise "Internal error - the @bis_codes var was not available" if @bis_codes.blank?
     update_progress(2)
     # first, clean up. This hierachy will be rebuilt
@@ -81,12 +82,44 @@ class Job < ActiveRecord::Base
     parent_code = parent.full_code
     children = []
     
+    if parent_code.first == 'A' 
+      
+      if parent_code == 'A' # root code
+        children = @bis_codes.select{ |code| code.full_code =~ /^A\d{2}\-\d{2}$/ }.sort_by { |code| code.full_code }
+      
+      elsif parent_code.include?('-') # a level 2 code
+        puts "--> finding children for a range"
+        parent_code_from, parent_code_to = parent_code.split('-')
+        parent_code_from.reverse!.chop!.reverse!
+        puts "--> finding children for (#{parent_code_from} .. #{parent_code_to})"
+        potential_children = @bis_codes.select{ |code| code.full_code =~ /^A\d{2}$/ }.sort_by { |code| code.full_code }
+        puts "--> found potential children: #{potential_children.inspect}"
+        children = potential_children.select { |code| (parent_code_from .. parent_code_to).include? code.full_code.reverse.chop.reverse }
+      end
+      
+    elsif parent_code.first == 'B'
+      
+      if parent_code == 'B' # root code
+        children = @bis_codes.select{ |code| code.full_code =~ /^B\d{2}\-\d{2}$/ }.sort_by { |code| code.full_code }
+      
+      elsif parent_code.include?('-') # a level 2 code
+        parent_code_from, parent_code_to = parent_code.split('-')
+        parent_code_from.reverse!.chop!.reverse!
+        potential_children = @bis_codes.select{ |code| code.full_code =~ /^B\d{2}$/ }.sort_by { |code| code.full_code }
+        children = potential_children.select { |code| (parent_code_from .. parent_code_to).include? code.full_code.reverse.chop.reverse }
+      end
+      
+    elsif parent_code.first == 'P'
+      children = @bis_codes.select{ |code| code.full_code =~ /^#{parent_code}\d{2}$/ }.sort_by { |code| code.full_code } if children.blank?
+    
     # groups 1-9
-    if (1..9).to_a.include? parent_code.first.to_i
+    elsif (1..9).to_a.include? parent_code.first.to_i
       children = @bis_codes.select{ |code| code.full_code =~ /^#{parent_code}\d$/ }.sort_by { |code| code.full_code }
       children = @bis_codes.select{ |code| code.full_code =~ /^#{parent_code}\d{2}$/ }.sort_by { |code| code.full_code } if children.blank?
-      children = @bis_codes.select{ |code| code.full_code =~ /^#{parent_code}\s\d{2,3}$/ }.sort_by { |code| code.full_code } if children.blank?
+      children = @bis_codes.select{ |code| code.full_code =~ /^#{parent_code}\s\d{2}$/ }.sort_by { |code| code.full_code } if children.blank?
+      children = @bis_codes.select{ |code| code.full_code =~ /^#{parent_code}\s\d{3}$/ }.sort_by { |code| code.full_code } if children.blank?
       # children = @bis_codes.select{ |code| code.full_code =~ /^#{parent_code}\+\d*$/ }.sort_by { |code| code.full_code } if children.blank?
+    
     # group 0
     elsif parent_code.first.to_i == 0
       children = @bis_codes.select{ |code| code.full_code =~ /^#{parent_code}\d$/ }.sort_by { |code| code.full_code } if children.blank?
