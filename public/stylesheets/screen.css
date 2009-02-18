@@ -4,6 +4,9 @@ body, p, ol, ul, td {
   font-family: verdana, arial, helvetica, sans-serif;
   font-size:   10pt;
   line-height: 1.6em;
+  padding: 0px;
+  margin: 0px;
+  border: 0px;
 }
 
 h1 {
@@ -11,15 +14,80 @@ h1 {
 }
 
 ul {
-  padding-left:12px;
+  padding-left: 12px;
 }
 
 #header {
+  padding: 0px;
+  margin: 0px;
+  border: 0px;
+  background-color: #000;
+}
+
+#header h1 {
+  color: #fff;
+  padding: 10px;
+  margin: 0px;
+}
+
+#heading {
+  width: 100%;
+  border-bottom: 1px solid #999 ;
+}
+
+#menu {
+  padding: 4px;
+  padding-left: 10px;
+  list-style: none;
+  color: #fff;
+}
+
+#menu a {
+  color: #fff;
+  text-decoration: none;
+}
+
+#code_navigation {
+  background-color: #ccf;
   width: 500px;
   float: right;
-  display:block;
+  display: block;
+  padding: 20px;
+}
+
+#search {
+  padding: 10px;
+}
+
+#hierachy {
+  list-style: none;
 }
 
 #content {
-  display:block;
+  display: block;
+  padding: 10px;
 }
+
+#content p, #nav, #references, .search_result {
+  list-style: none;
+  padding-left: 0;
+  padding-bottom: 20px;
+  margin-left: 5%;
+  width: 600px;
+}
+
+#references li {
+  padding-bottom: 1.3em;
+}
+
+.search_result {
+  padding-bottom: 15px;
+  border-bottom: 1px solid #ccc ;
+}
+
+.search_result dd {
+  padding: 0;
+  margin: 0;
+}
+
+
