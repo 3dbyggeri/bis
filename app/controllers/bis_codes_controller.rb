@@ -15,7 +15,7 @@ class BisCodesController < ApplicationController
   def show
     @bis_code = BisCode.find_by_full_code(params[:id].split('-')[0].gsub('__','/').gsub('_','.'))
 
-    unless @bis_code.to_param == params[:id]
+    if params[:format].nil? && @bis_code.to_param != params[:id] # format is html and slugs don't match
       headers["Status"] = "301 Moved Permanently"
       redirect_to bis_code_url @bis_code
     else
