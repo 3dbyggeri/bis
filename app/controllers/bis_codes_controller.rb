@@ -2,22 +2,27 @@ class BisCodesController < ApplicationController
   # GET /bis_codes
   # GET /bis_codes.xml
   def index
-    @bis_codes = BisCode.find(:all)
+    @bis_codes = BisCode.get_hierachy_root
 
     respond_to do |format|
       format.html # index.html.erb
-      format.xml  { render :xml => @bis_codes }
+      format.xml  { render :xml => @bis_codes.to_xml(:only => [:full_code,:label], :include => [:children]) }
     end
   end
 
   # GET /bis_codes/1
   # GET /bis_codes/1.xml
   def show
-    @bis_code = BisCode.find(params[:id])
+    @bis_code = BisCode.find_by_full_code(params[:id].split('-')[0].gsub('__','/').gsub('_','.'))
 
-    respond_to do |format|
-      format.html # show.html.erb
-      format.xml  { render :xml => @bis_code }
+    unless @bis_code.to_param == params[:id]
+      headers["Status"] = "301 Moved Permanently"
+      redirect_to bis_code_url @bis_code
+    else
+      respond_to do |format|
+        format.html # show.html.erb
+        format.xml  { render :xml => @bis_code.to_xml(:only => [:full_code,:label], :include => [:children, :parent]) }
+      end
     end
   end
 
@@ -34,7 +39,7 @@ class BisCodesController < ApplicationController
 
   # GET /bis_codes/1/edit
   def edit
-    @bis_code = BisCode.find(params[:id])
+    @bis_code = BisCode.find_by_full_code(params[:full_code])
   end
 
   # POST /bis_codes
@@ -57,7 +62,7 @@ class BisCodesController < ApplicationController
   # PUT /bis_codes/1
   # PUT /bis_codes/1.xml
   def update
-    @bis_code = BisCode.find(params[:id])
+    @bis_code = BisCode.find_by_full_code(params[:full_code])
 
     respond_to do |format|
       if @bis_code.update_attributes(params[:bis_code])
@@ -74,7 +79,7 @@ class BisCodesController < ApplicationController
   # DELETE /bis_codes/1
   # DELETE /bis_codes/1.xml
   def destroy
-    @bis_code = BisCode.find(params[:id])
+    @bis_code = BisCode.find_by_full_code(params[:full_code])
     @bis_code.destroy
 
     respond_to do |format|
@@ -85,5 +90,10 @@ class BisCodesController < ApplicationController
   
   def search
     @bis_codes = BisCode.find_by_sql(["SELECT id, full_code, label FROM bis_codes WHERE label LIKE ? OR full_code LIKE ?", "%#{params[:q]}%", "%#{params[:q]}%"])
+
+    respond_to do |format|
+      format.html # show.html.erb
+      format.xml  { render :xml => @bis_code.to_xml(:only => [:full_code,:label], :include => [:children, :parent]) }
+    end
   end
 end

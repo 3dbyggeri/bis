@@ -36,5 +36,9 @@ class BisCode < ActiveRecord::Base
       parent.parent_recursive(arr)
     end
   end
+  
+  def to_param
+    "#{full_code.gsub('.','_').gsub('/','__')}-#{label.gsub(/[^a-z1-9ÆØÅæøå]+/i, '-')}"
+  end
 
 end

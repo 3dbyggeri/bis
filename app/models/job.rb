@@ -88,12 +88,9 @@ class Job < ActiveRecord::Base
         children = @bis_codes.select{ |code| code.full_code =~ /^A\d{2}\-\d{2}$/ }.sort_by { |code| code.full_code }
       
       elsif parent_code.include?('-') # a level 2 code
-        puts "--> finding children for a range"
         parent_code_from, parent_code_to = parent_code.split('-')
         parent_code_from.reverse!.chop!.reverse!
-        puts "--> finding children for (#{parent_code_from} .. #{parent_code_to})"
         potential_children = @bis_codes.select{ |code| code.full_code =~ /^A\d{2}$/ }.sort_by { |code| code.full_code }
-        puts "--> found potential children: #{potential_children.inspect}"
         children = potential_children.select { |code| (parent_code_from .. parent_code_to).include? code.full_code.reverse.chop.reverse }
       end
       

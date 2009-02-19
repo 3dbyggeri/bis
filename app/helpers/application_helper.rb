@@ -4,6 +4,10 @@ module ApplicationHelper
     RedCloth.new((textile)).to_html
   end
   
+  def title(page_title)
+    content_for(:title) { "#{page_title} - " }
+  end
+  
   def build_hierachy_menu
     list = "<ul>"
     BisCode.get_hierachy_root.each do |root_code|

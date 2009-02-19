@@ -1,3 +1,5 @@
+<% title "#{@bis_code.full_code} #{@bis_code.label}" %>
+
 <h1>Gruppe <%= @bis_code.full_code %></h1>
 <p><strong><%= @bis_code.label %></strong></p>
 
@@ -7,7 +9,7 @@
 <% end %>
 
 <h2>Links</h2>
-<p><a href="http://www.digitaleprodukter.dk<%="?q=#{@bis_code.label}"%>">Søg efter produkter på digitaleprodukter.dk</a></p>
+<p><a href="http://www.digitaleprodukter.dk<%="?q=#{@bis_code.label}"%>">Søg efter "<%= @bis_code.label %>" på digitaleprodukter.dk</a></p>
 <p><%= link_to "XML for denne BIS kode", formatted_bis_code_path(@bis_code, :format => :xml)  %>
 
 <% unless @bis_code.references.blank? %>
