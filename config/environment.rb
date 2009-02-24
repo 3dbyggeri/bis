@@ -28,6 +28,7 @@ Rails::Initializer.run do |config|
   # config.gem "sqlite3-ruby", :lib => "sqlite3"
   # config.gem "aws-s3", :lib => "aws/s3"
   config.gem "RedCloth", :lib => "redcloth"      # Textile & Markdown for Ruby
+  config.gem "unicode"      # Unicode string manipulation library for Ruby.
 
   # Only load the plugins named here, in the order given. By default, all plugins 
   # in vendor/plugins are loaded in alphabetical order.
