@@ -39,7 +39,7 @@ class BisCodesController < ApplicationController
 
   # GET /bis_codes/1/edit
   def edit
-    @bis_code = BisCode.find_by_full_code(params[:full_code])
+    @bis_code = BisCode.find_by_full_code(params[:id].split('-')[0].gsub('__','/').gsub('_','.'))
   end
 
   # POST /bis_codes
@@ -62,7 +62,7 @@ class BisCodesController < ApplicationController
   # PUT /bis_codes/1
   # PUT /bis_codes/1.xml
   def update
-    @bis_code = BisCode.find_by_full_code(params[:full_code])
+    @bis_code = BisCode.find_by_full_code(params[:id].split('-')[0].gsub('__','/').gsub('_','.'))
 
     respond_to do |format|
       if @bis_code.update_attributes(params[:bis_code])
@@ -79,7 +79,7 @@ class BisCodesController < ApplicationController
   # DELETE /bis_codes/1
   # DELETE /bis_codes/1.xml
   def destroy
-    @bis_code = BisCode.find_by_full_code(params[:full_code])
+    @bis_code = BisCode.find_by_full_code(params[:id].split('-')[0].gsub('__','/').gsub('_','.'))
     @bis_code.destroy
 
     respond_to do |format|

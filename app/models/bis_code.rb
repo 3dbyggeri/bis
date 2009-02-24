@@ -1,4 +1,5 @@
 class BisCode < ActiveRecord::Base
+  require 'unicode'
 
   has_many :references_as_referrer, :foreign_key => 'referrer_id', :class_name => 'BisCodeReference'
   has_many :references, :through => :references_as_referrer
@@ -38,7 +39,7 @@ class BisCode < ActiveRecord::Base
   end
   
   def to_param
-    "#{full_code.gsub('.','_').gsub('/','__')}-#{label.gsub(/[^a-z1-9ÆØÅæøå]+/i, '-')}"
+    full_code.gsub('.','_').gsub('/','__')+"-"+(Unicode::normalize_KD(label).gsub(/[Ææ]/,'ae').gsub(/[Øø]/,'o').downcase.gsub(/[^a-z0-9\s_-]+/,'').gsub(/[\s_-]+/,'-'))
   end
 
 end
